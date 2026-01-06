@@ -70,6 +70,13 @@ impl Camera {
             .add(&self.pixel_delta_v.scale(0.5));
     }
 
+    pub fn linear_to_gamma(linear_component: f64) -> f64 {
+        if linear_component > 0.0 {
+            return linear_component.sqrt();
+        }
+        return 0.0;
+    }
+
     pub fn render(&mut self, world: &HittableList, image_handler: &mut ImageHandler) {
         self.initialize();
 
@@ -84,10 +91,15 @@ impl Camera {
 
                 pixel_color = pixel_color.scale(self.pixel_samples_scale);
 
-                let r = (pixel_color.x.clamp(0.0, 1.0) * 255.999) as u8;
-                let g = (pixel_color.y.clamp(0.0, 1.0) * 255.999) as u8;
-                let b = (pixel_color.z.clamp(0.0, 1.0) * 255.999) as u8;
-                image_handler.set_pixel(x, y, r, g, b);
+                let r = Camera::linear_to_gamma(pixel_color.x);
+                let g = Camera::linear_to_gamma(pixel_color.y);
+                let b = Camera::linear_to_gamma(pixel_color.z);
+
+                let rbyte = (r.clamp(0.0, 1.0) * 255.999) as u8;
+                let gbyte = (g.clamp(0.0, 1.0) * 255.999) as u8;
+                let bbyte = (b.clamp(0.0, 1.0) * 255.999) as u8;
+
+                image_handler.set_pixel(x, y, rbyte, gbyte, bbyte);
             }
         }
     }
