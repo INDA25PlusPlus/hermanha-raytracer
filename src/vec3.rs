@@ -1,3 +1,5 @@
+use rand::Rng;
+
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
     pub x: f64,
@@ -59,5 +61,42 @@ impl Vec3 {
 
     pub fn length_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
+    }
+
+    pub fn random() -> Vec3 {
+        let mut rng = rand::rng();
+        return Vec3::new(
+            rng.random_range(0.0..1.0),
+            rng.random_range(0.0..1.0),
+            rng.random_range(0.0..1.0),
+        );
+    }
+
+    pub fn random_range(min: f64, max: f64) -> Vec3 {
+        let mut rng = rand::rng();
+        return Vec3::new(
+            rng.random_range(min..max),
+            rng.random_range(min..max),
+            rng.random_range(min..max),
+        );
+    }
+
+    pub fn random_unit_vector() -> Vec3 {
+        loop {
+            let p = Vec3::random_range(-1.0, 1.0);
+            let lensq = p.length_squared();
+            if lensq > 1e-160 && lensq <= 1.0 {
+                return p.div(lensq.sqrt());
+            }
+        }
+    }
+
+    pub fn random_on_hemisphere(normal: &Vec3) -> Vec3 {
+        let on_unit_sphere = Vec3::random_unit_vector();
+        if on_unit_sphere.dot(normal) > 0.0 {
+            return on_unit_sphere;
+        } else {
+            return on_unit_sphere.scale(-1.0);
+        }
     }
 }
