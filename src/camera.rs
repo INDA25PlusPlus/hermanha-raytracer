@@ -1,5 +1,6 @@
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
+use rand::Rng;
 
 pub struct Camera {
     center: Point3,
@@ -12,6 +13,7 @@ impl Camera {
     pub fn new(image_width: u32, image_height: u32) -> Self {
         let focal_length = 1.0;
         let viewport_height = 2.0;
+
         let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
         let center = Point3::new(0.0, 0.0, 0.0);
 
@@ -39,12 +41,24 @@ impl Camera {
     }
 
     pub fn get_ray(&self, i: u32, j: u32) -> Ray {
-        let direction = self
+        let offset = self.sample_square();
+        let pixel_sample = self
             .pixel00_loc
-            .add(&self.pixel_delta_u.scale(i as f64))
-            .add(&self.pixel_delta_v.scale(j as f64))
-            .sub(&self.center);
+            .add(&self.pixel_delta_u.scale(i as f64 + offset.x))
+            .add(&self.pixel_delta_v.scale(j as f64 + offset.y));
 
-        Ray::new(self.center, direction)
+        let ray_origin = self.center;
+        let ray_direction = pixel_sample.sub(&ray_origin);
+
+        Ray::new(ray_origin, ray_direction)
+    }
+
+    pub fn sample_square(&self) -> Vec3 {
+        let mut rng = rand::rng();
+        return Vec3::new(
+            rng.random_range(-0.5..0.5),
+            rng.random_range(-0.5..0.5),
+            0.0,
+        );
     }
 }
