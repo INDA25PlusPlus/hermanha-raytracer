@@ -39,14 +39,6 @@ impl Vec3 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
-    pub fn cross(&self, other: &Vec3) -> Vec3 {
-        Self::new(
-            self.y * other.z - self.z * other.y,
-            self.z * other.x - self.x * other.z,
-            self.x * other.y - self.y * other.x,
-        )
-    }
-
     pub fn normalize(&self) -> Vec3 {
         self.div(self.length())
     }
@@ -61,15 +53,6 @@ impl Vec3 {
 
     pub fn length_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
-    }
-
-    pub fn random() -> Vec3 {
-        let mut rng = rand::rng();
-        return Vec3::new(
-            rng.random_range(0.0..1.0),
-            rng.random_range(0.0..1.0),
-            rng.random_range(0.0..1.0),
-        );
     }
 
     pub fn random_range(min: f64, max: f64) -> Vec3 {
@@ -98,5 +81,9 @@ impl Vec3 {
         } else {
             return on_unit_sphere.scale(-1.0);
         }
+    }
+
+    pub fn reflect(v: &Vec3, n: &Vec3) -> Vec3 {
+        v.sub(&n.scale(2.0 * v.dot(n)))
     }
 }

@@ -1,18 +1,21 @@
 use crate::hittable::{HitRecord, Hittable};
 use crate::interval::Interval;
+use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
 pub struct Plane {
     point: Point3,
     normal: Vec3,
+    mat: Material,
 }
 
 impl Plane {
-    pub fn new(point: Point3, normal: Vec3) -> Self {
+    pub fn new(point: Point3, normal: Vec3, mat: Material) -> Self {
         Self {
             point,
             normal: normal.normalize(),
+            mat,
         }
     }
 }
@@ -35,6 +38,7 @@ impl Hittable for Plane {
         rec.p = ray.at(rec.t);
 
         rec.set_face_normal(ray, &self.normal);
+        rec.mat = Some(self.mat);
 
         true
     }

@@ -1,5 +1,6 @@
 use crate::hittable::{HitRecord, Hittable};
 use crate::interval::Interval;
+use crate::material::Material;
 use crate::plane::Plane;
 use crate::ray::Ray;
 use crate::sphere::Sphere;
@@ -21,13 +22,13 @@ impl HittableList {
         }
     }
 
-    pub fn add_plane(&mut self, point: Point3, normal: Vec3) {
-        let plane = Plane::new(point, normal);
+    pub fn add_plane(&mut self, point: Point3, normal: Vec3, mat: Material) {
+        let plane = Plane::new(point, normal, mat);
         self.objects.push(HittableObject::Plane(plane));
     }
 
-    pub fn add_sphere(&mut self, center: Point3, radius: f64) {
-        let sphere = Sphere::new(center, radius);
+    pub fn add_sphere(&mut self, center: Point3, radius: f64, mat: Material) {
+        let sphere = Sphere::new(center, radius, mat);
         self.objects.push(HittableObject::Sphere(sphere));
     }
 

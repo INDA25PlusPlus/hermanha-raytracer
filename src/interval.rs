@@ -4,7 +4,6 @@ pub struct Interval {
 }
 
 impl Interval {
-
     pub fn new() -> Self {
         Self {
             min: f64::INFINITY,
